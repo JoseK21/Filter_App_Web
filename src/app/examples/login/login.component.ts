@@ -68,7 +68,11 @@ export class LoginComponent implements OnInit {
             /** spinner ends after 5 seconds */
             this.spinner.hide();
             this.showFilters = true;
+
+            alert(localStorage.getItem('url_api'))
         }, 5000);
+
+
 
         return 0;
         const formData = new FormData();
