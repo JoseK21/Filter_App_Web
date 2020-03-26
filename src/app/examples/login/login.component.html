@@ -1,0 +1,55 @@
+<div class="page-header" filter-color="orange">
+    <div class="page-header-image" style="background-image:url(assets/img/login1.jpg)"></div>
+    <div class="container">
+        <div class="col-md-4 content-center">
+            <div class="card card-login card-plain">
+                <form>
+
+                    <div class="content">
+                        <div class="row">
+                            <div class="col">
+                                <h3>Seleccione una imagen</h3>
+                                <div class="form-group">
+                                    <label for="imageUpload" class="btn btn-secondary btn-block btn-outlined">Elija el archivo</label>
+
+                                    <input type="file" name="image" id="imageUpload"  accept="image/*" style="display: none" (change)="fileProgress($event)" />
+                                </div>
+                                <div *ngIf="fileUploadProgress">
+                                    Upload progress: {{ fileUploadProgress }}
+                                </div>
+                                <div class="image-preview" *ngIf="previewUrl">
+                                    <img [src]="previewUrl" height="300" />
+                                </div>
+
+                                <div class="mb-3" *ngIf="uploadedFilePath">
+                                    {{uploadedFilePath}}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="text-center">
+                        <a class="btn btn-danger btn-round btn-lg btn-block" (click)="onSubmit()"> Filtrar</a>
+                    </div>
+
+                    <div class="row justify-content-around" *ngIf="showFilters">
+                        <div class="col-6">
+                            <a class="btn btn-secondary btn-round btn-block" (click)="showFilter1()"> Filtro Media
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="btn btn-secondary btn-round btn-block" (click)="showFilter2()"> Filtro Mediana</a>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ngx-spinner bdOpacity=0.9 bdColor="rgba(0,0,0,0.82)" size="medium" color="#FF3636" type="ball-grid-pulse"
+    [fullScreen]="true">
+    <p style="color: white"> Procesando... </p>
+</ngx-spinner>
