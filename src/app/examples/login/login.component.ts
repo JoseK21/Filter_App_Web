@@ -105,7 +105,14 @@ export class LoginComponent implements OnInit {
         var parts = base64StringFromURL.split(";base64,");
         var base64 = parts[1];
         var byteArray = this.base64ToByteArray(base64, size);
-        this.webSocketService.send_info(byteArray)
+        console.log(typeof byteArray);
+
+        let a = []
+        for (var key in byteArray[0]) {
+            a.push(byteArray[0][key])
+        }
+        this.webSocketService.send_info(a)
+        /* this.webSocketService.send_info(byteArray) */
     }
 
     base64ToByteArray(base64String, size) {
