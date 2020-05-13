@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { NgxSpinnerService } from "ngx-spinner";
 import Swal from 'sweetalert2'
+import { WebServiceService } from 'app/web-service.service';
 
 @Component({
     selector: 'app-login',
@@ -21,7 +22,7 @@ export class LoginComponent implements OnInit {
 
     showFilters: boolean = false;
 
-    constructor(private http: HttpClient, private spinner: NgxSpinnerService) { }
+    constructor(private http: HttpClient, private spinner: NgxSpinnerService, private webSocketService: WebServiceService) { }
 
     ngOnInit() {
         var body = document.getElementsByTagName('body')[0];
@@ -29,7 +30,13 @@ export class LoginComponent implements OnInit {
 
         var navbar = document.getElementsByTagName('nav')[0];
         navbar.classList.add('navbar-transparent');
+
+
+        this.webSocketService.listen('test event').subscribe((data) => {
+            console.log(data);
+        })
     }
+
     ngOnDestroy() {
         var body = document.getElementsByTagName('body')[0];
         body.classList.remove('login-page');
@@ -42,10 +49,11 @@ export class LoginComponent implements OnInit {
 
     fileProgress(fileInput: any) {
         this.fileData = <File>fileInput.target.files[0];
-        this.preview();
+        this.webSocketService.send_info(this.fileData.size)
+        this.preview(this.fileData.size);
     }
 
-    preview() {
+    preview(size) {
         // Show preview 
         var mimeType = this.fileData.type;
         if (mimeType.match(/image\/*/) == null) {
@@ -56,34 +64,21 @@ export class LoginComponent implements OnInit {
         reader.readAsDataURL(this.fileData);
         reader.onload = (_event) => {
             this.previewUrl = reader.result;
+            this.test(this.previewUrl, size);
         }
     }
 
-    onSubmit() {
 
+
+    onSubmit() {
         /** spinner starts on init */
         this.spinner.show();
-
         setTimeout(() => {
             /** spinner ends after 5 seconds */
             this.spinner.hide();
             this.showFilters = true;
-
             alert(localStorage.getItem('url_api'))
         }, 5000);
-
-
-
-        return 0;
-        const formData = new FormData();
-        formData.append('file', this.fileData);
-        this.http.post('url/to/your/api', formData)
-            .subscribe(res => {
-                console.log(res);
-                /* this.uploadedFilePath = res['data'].filePath; */
-                this.uploadedFilePath = res['data']['filePath'];
-                alert('SUCCESS !!');
-            })
     }
 
     /* Save Image in Local File */
@@ -104,4 +99,40 @@ export class LoginComponent implements OnInit {
             imageAlt: 'Cargando..',
         })
     }
+
+
+    test(base64StringFromURL, size) {
+        var parts = base64StringFromURL.split(";base64,");
+        var base64 = parts[1];
+        var byteArray = this.base64ToByteArray(base64, size);
+        this.webSocketService.send_info(byteArray)
+    }
+
+    base64ToByteArray(base64String, size) {
+        try {
+            var sliceSize = size; /* 1024 */
+            var byteCharacters = atob(base64String);
+            var bytesLength = byteCharacters.length;
+            var slicesCount = Math.ceil(bytesLength / sliceSize);
+            var byteArrays = new Array(slicesCount);
+
+            for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+                var begin = sliceIndex * sliceSize;
+                var end = Math.min(begin + sliceSize, bytesLength);
+
+                var bytes = new Array(end - begin);
+                for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+                    bytes[i] = byteCharacters[offset].charCodeAt(0);
+                }
+                byteArrays[sliceIndex] = new Uint8Array(bytes);
+            }
+            return byteArrays;
+        } catch (e) {
+            console.log("Couldn't convert to byte array: " + e);
+            return undefined;
+        }
+    }
 }
+
+
+
