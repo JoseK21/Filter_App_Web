@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
 
     fileData: File = null;
     previewUrl: any = null;
+    previewUrl_bool: boolean = true;
     fileUploadProgress: string = null;
     uploadedFilePath: string = null;
 
@@ -27,34 +28,29 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         var body = document.getElementsByTagName('body')[0];
         body.classList.add('login-page');
-
         var navbar = document.getElementsByTagName('nav')[0];
         navbar.classList.add('navbar-transparent');
 
 
-        this.webSocketService.listen('test event').subscribe((data) => {
-            console.log(data);
-        })
+        this.webSocketService.listen('test event').subscribe((data) => { console.log(data); })
     }
 
     ngOnDestroy() {
         var body = document.getElementsByTagName('body')[0];
         body.classList.remove('login-page');
-
         var navbar = document.getElementsByTagName('nav')[0];
         navbar.classList.remove('navbar-transparent');
     }
 
 
-
     fileProgress(fileInput: any) {
         this.fileData = <File>fileInput.target.files[0];
-        this.webSocketService.send_info(this.fileData.size)
-        this.preview(this.fileData.size);
+        /* this.change()  */
+        this.preview()
     }
 
-    preview(size) {
-        // Show preview 
+
+    preview() {
         var mimeType = this.fileData.type;
         if (mimeType.match(/image\/*/) == null) {
             return;
@@ -64,56 +60,55 @@ export class LoginComponent implements OnInit {
         reader.readAsDataURL(this.fileData);
         reader.onload = (_event) => {
             this.previewUrl = reader.result;
-            this.test(this.previewUrl, size);
+            this.previewUrl_bool = false;
+
+            /* this.test(this.previewUrl, this.fileData.size); */
         }
     }
 
+    /**
+     * change
+     */
+    public change() {
+        /* document.querySelector('input').addEventListener('change', function () { */
 
+        var reader = new FileReader();
+        reader.onload = function () {
+
+            var arrayBuffer = this.result,
+                array = new Uint8Array(arrayBuffer as ArrayBuffer),
+                binaryString = String.fromCharCode.apply(null, array);
+
+            console.log(binaryString);
+
+        }
+        reader.readAsArrayBuffer(this.fileData);
+
+        /* }, false); */
+
+    }
 
     onSubmit() {
         /** spinner starts on init */
         this.spinner.show();
+        this.test(this.previewUrl, this.fileData.size);
         setTimeout(() => {
-            /** spinner ends after 5 seconds */
             this.spinner.hide();
             this.showFilters = true;
             alert(localStorage.getItem('url_api'))
-        }, 5000);
+        }, 2000);
     }
-
-    /* Save Image in Local File */
-    showFilter1() {
-        Swal.fire({
-            title: 'Filtro Media!',
-            imageUrl: 'https://unsplash.it/400/400',
-            imageHeight: 300,
-            imageAlt: 'Cargando..',
-        })
-    }
-
-    showFilter2() {
-        Swal.fire({
-            title: 'Filtro Mediana!',
-            imageUrl: 'https://unsplash.it/300/400',
-            imageHeight: 300,
-            imageAlt: 'Cargando..',
-        })
-    }
-
 
     test(base64StringFromURL, size) {
         var parts = base64StringFromURL.split(";base64,");
         var base64 = parts[1];
-        /* var byteArray = this.base64ToByteArray(base64, size);
-        console.log(typeof byteArray);
-
+        var byteArray = this.base64ToByteArray(base64, size);
         let a = []
-        for (var key in byteArray[0]) {
-            a.push(byteArray[0][key])
-        }
-        this.webSocketService.send_info(a) */
-        /* this.webSocketService.send_info(byteArray) */
-        this.webSocketService.send_info(base64)
+
+        for (var key in byteArray[0]) { a.push(byteArray[0][key]) }
+
+        var binaryString = String.fromCharCode.apply(null, a);
+        this.webSocketService.send_info(binaryString)
     }
 
     base64ToByteArray(base64String, size) {
