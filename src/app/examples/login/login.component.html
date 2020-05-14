@@ -1,5 +1,5 @@
 <div class="page-header" filter-color="orange">
-    <div class="page-header-image" style="background-image:url(assets/img/login1.jpg)"></div>
+    <div class="page-header-image" style="background-image:url(assets/img/backgroud.jpg)"></div>
     <div class="container">
         <div class="col-md-4 content-center">
             <div class="card card-login card-plain">
@@ -7,31 +7,18 @@
                     <div class="content">
                         <div class="row">
                             <div class="col">
-
                                 <div class="form-group">
                                     <label for="imageUpload" class="btn btn-secondary btn-block btn-outlined">
                                         Elija el archivo
                                     </label>
-
                                     <input type="file" name="image" id="imageUpload" accept="image/jpg"
-                                        style="display: none" (change)="fileProgress($event)" />
-                                </div>
-                                <div *ngIf="fileUploadProgress">
-                                    Upload progress: {{ fileUploadProgress }}
+                                        style="display: none" (change)="fileProgress($event)"/>
                                 </div>
                                 <div class="image-preview" *ngIf="previewUrl">
-                                    <img [src]="previewUrl" height="300" />
-                                </div>
-
-                                <div class="mb-3" *ngIf="uploadedFilePath">
-                                    {{uploadedFilePath}}
+                                    <img [src]="previewUrl" height="250" />
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                    <div class="text-center" *ngIf="!previewUrl_bool">
-                        <button class="btn btn-danger btn-round btn-lg btn-block" (click)="onSubmit()"> Filtrar</button>
                     </div>
                 </form>
             </div>
