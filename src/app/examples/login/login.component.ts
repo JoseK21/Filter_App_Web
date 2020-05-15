@@ -38,17 +38,22 @@ export class LoginComponent implements OnInit {
 
     fileProgress(fileInput: any) {
         this.fileData = <File>fileInput.target.files[0];
-        this.preview()
+        this.preview(this.fileData.size)
     }
 
-    preview() {
+    preview(size) {
         this.onSubmit()
         if (this.fileData.type.match(/image\/*/) == null) { return }
         var reader = new FileReader();
+
         reader.readAsDataURL(this.fileData);
         reader.onload = (e) => {
             this.previewUrl = e.target.result;
-            this.webSocketService.send_info(this._base64ToArrayBuffer(e.target.result));
+            let json = {
+                size: size,
+                image: this._base64ToArrayBuffer(e.target.result)
+            }
+            this.webSocketService.send_info(json);
         }
     }
 
