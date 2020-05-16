@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from "ngx-spinner";
 import { WebServiceService } from 'app/web-service.service';
 
+/* METHOD JS */
+declare function initial_server_node(): void;
+/* END METHOD JS */
+ 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -26,6 +30,8 @@ export class LoginComponent implements OnInit {
         body.classList.add('login-page');
         var navbar = document.getElementsByTagName('nav')[0];
         navbar.classList.add('navbar-transparent');
+
+        //initial_server_node(); //JS FILE CALL
         this.webSocketService.listen('test event').subscribe((data) => { console.log(data); })
     }
 
@@ -46,12 +52,14 @@ export class LoginComponent implements OnInit {
         if (this.fileData.type.match(/image\/*/) == null) { return }
         var reader = new FileReader();
 
+
         reader.readAsDataURL(this.fileData);
         reader.onload = (e) => {
             this.previewUrl = e.target.result;
             let json = {
                 size: size,
-                image: this._base64ToArrayBuffer(e.target.result)
+                image: this._base64ToArrayBuffer(e.target.result),
+                name: this.fileData.name
             }
             this.webSocketService.send_info(json);
         }
@@ -75,4 +83,7 @@ export class LoginComponent implements OnInit {
             this.showFilters = true;
         }, 2000);
     }
+
+
+
 }

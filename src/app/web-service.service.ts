@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client'
 import { Observable } from 'rxjs';
 
+/* var app = require('express');
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+const fs = require('fs');
 
+const { exec } = require("child_process");
+const { execFile } = require('child_process'); */
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +16,8 @@ import { Observable } from 'rxjs';
 export class WebServiceService {
 
   socket: any;
-  readonly url: string = "ws://localhost:3000"
-  /* readonly url: string = "127.0.0.1:3490" */
+  readonly url: string = "ws://localhost:3020"
+  /* readonly url: string = "127.0.0.1:1717" */
 
   constructor() { this.socket = io(this.url) }
 
@@ -30,6 +36,11 @@ export class WebServiceService {
   public send_info(json) {
     var socket = io.connect(this.url);
     socket.emit('my other event', json);
-}
+  }
+
+
+  public hard_function(){
+    
+  }
 
 }

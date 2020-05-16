@@ -10,7 +10,7 @@ import { ExamplesModule } from './examples/examples.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
-
+ 
 @NgModule({
     declarations: [
         AppComponent,
