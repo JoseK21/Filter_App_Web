@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { Location} from '@angular/common';
+import { Location } from '@angular/common';
 import Swal from 'sweetalert2';
 
 
@@ -47,26 +47,57 @@ export class NavbarComponent implements OnInit {
     openSettings() {
         Swal.mixin({
             input: 'text',
-            confirmButtonText: 'Continuar &rarr;',
+            confirmButtonText: 'Next &rarr;',
             showCancelButton: true,
-        }).queue([            
+            progressSteps: ['1', '2']
+        }).queue([
             {
-                title: 'Url Api',
-                inputPlaceholder: 'Ejemplo: http://ejemplo.com:9000/api',
+                title: 'URL Server',
+                input: 'text',
+                text: 'Please, Write the url of the server',
+                inputPlaceholder: 'Example: https://dev.azure.com/TEC',
                 inputValidator: (value) => {
-                    if (!value) { return 'Ingrese la url del api!' }
+                    if (!value) {
+                        return 'You need to write the url server!'
+                    }
                 }
-            }      
+            },
+            {
+                title: 'Port Server',
+                input: 'number',
+                text: 'Please, Write the port of the server',
+                inputPlaceholder: 'Example: 8080',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to write the port!'
+                    }
+                }
+            },
         ]).then((result) => {
-            if (result.value) {                
-                localStorage.setItem('url_api', result.value[0]);
-
+            if (result.value) {
+                const answers = result.value
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Configuración Exitosa!',
-                    text: result.value[0],
-                  })
+                    title: 'All done!',
+                    html: ` Url Server:  ${answers[0]}<br>
+                            Port: ${answers[1]}`,
+                    confirmButtonText: 'OK!'
+                })
+                localStorage.setItem('URL', answers[0]);
+                localStorage.setItem('PORT', answers[1]);
             }
         })
+    }
+
+    openAbout(){
+        Swal.fire({
+            title: 'About',
+            html:`Technological Institute of Costa Rica! <br> CE-4303 Principles of Operating Systems <br> COVIC-19 <br> V.1.2 `,
+            showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+            },
+            hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+            }
+          })
     }
 }

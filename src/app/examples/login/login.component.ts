@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from "ngx-spinner";
 import { WebServiceService } from 'app/web-service.service';
+import Swal from 'sweetalert2';
 
 /* METHOD JS */
 declare function initial_server_node(): void;
 /* END METHOD JS */
- 
+
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -13,6 +14,8 @@ declare function initial_server_node(): void;
 })
 export class LoginComponent implements OnInit {
 
+    /* 127.0.0.1:1717 */
+    
     data: Date = new Date();
     focus;
     focus1;
@@ -47,8 +50,9 @@ export class LoginComponent implements OnInit {
         this.preview(this.fileData.size)
     }
 
+    public my_json: any;
     preview(size) {
-        this.onSubmit()
+        /* this.onSubmit() */
         if (this.fileData.type.match(/image\/*/) == null) { return }
         var reader = new FileReader();
 
@@ -61,7 +65,8 @@ export class LoginComponent implements OnInit {
                 image: this._base64ToArrayBuffer(e.target.result),
                 name: this.fileData.name
             }
-            this.webSocketService.send_info(json);
+            this.my_json = json;
+            this.previewUrl_bool = false;
         }
     }
 
@@ -76,14 +81,30 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
+        if (localStorage.getItem('URL') && localStorage.getItem('PORT')) {
+            this.show_animation();
+            this.my_json['URL'] = localStorage.getItem('URL');
+            this.my_json['PORT'] = localStorage.getItem('PORT');
+            this.webSocketService.send_info(this.my_json);
+        } else {
+            Swal.fire(
+                'Configurations!',
+                'Please, configure the url and port in Settings!',
+                'warning'
+            )
+        }
+    }
+
+    show_animation() {
         this.spinner.show();
         /* this.test(this.previewUrl, this.fileData.size); */
         setTimeout(() => {
             this.spinner.hide();
             this.showFilters = true;
-        }, 2000);
-    }
 
+            Swal.fire('Filtered Image!','', 'success')
+        }, 2500);
+    }
 
 
 }

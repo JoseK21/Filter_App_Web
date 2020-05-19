@@ -9,7 +9,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="imageUpload" class="btn btn-secondary btn-block btn-outlined">
-                                        Elija el archivo 
+                                        Choose Image
                                     </label>
                                     <input type="file" name="image" id="imageUpload" accept="image/jpg"
                                         style="display: none" (change)="fileProgress($event)"/>
@@ -20,6 +20,9 @@
                             </div>
                         </div>
                     </div>
+                    <div class="text-center" *ngIf="!previewUrl_bool">
+                        <button class="btn btn-danger btn-round btn-lg btn-block" (click)="onSubmit()">Apply Filters</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -28,5 +31,5 @@
 
 <ngx-spinner bdOpacity=0.9 bdColor="rgba(0,0,0,0.82)" size="medium" color="#FF3636" type="ball-grid-pulse"
     [fullScreen]="true">
-    <p style="color: white"> Procesando... </p>
+    <p style="color: white"> Processing Image... </p>
 </ngx-spinner>
